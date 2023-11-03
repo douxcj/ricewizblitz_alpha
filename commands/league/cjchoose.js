@@ -34,57 +34,64 @@ const all_champs = {
 };
 const { SlashCommandBuilder } = require('discord.js');
 
-const getRandomChampion = (lane) => {
-	let champs;
-	if (lane === 'all') {
-		const lanes = Object.keys(all_champs);
-		const randomLaneIndex = Math.floor(Math.random() * lanes.length);
-		const randomLane = lanes[randomLaneIndex];
-		champs = all_champs[randomLane];
-	}
-	else {
-		champs = all_champs[lane];
-	}
-	const randomIndex = Math.floor(Math.random() * champs.length);
-	return champs[randomIndex];
-};
-
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('cjchoose')
-		.setDescription('Select a random champion for a given lane')
-		.addStringOption((option) =>
-			option.setName('lane')
-				.setDescription('The lane for which to select a champion')
-				.setRequired(true)
-				.addChoices(
-					{ name: 'Top', value: 'top' },
-					{ name: 'Jungle', value: 'jg' },
-					{ name: 'Mid', value: 'mid' },
-					{ name: 'Bot', value: 'bot' },
-					{ name: 'Support', value: 'sup' },
-				),
-		)
-		.addIntegerOption((option) =>
-			option
-				.setName('number')
-				.setDescription('The number of champions to select (default: 1)'),
-		),
-	async execute(interaction) {
-		const lane = interaction.options.getString('lane');
-		const number = interaction.options.getInteger('number') || 1;
-
-		const champions = [];
-		for (let i = 0; i < number; i++) {
-			const champion = getRandomChampion(lane);
-			champions.push(champion);
+try {
+	const getRandomChampion = (lane) => {
+		let champs;
+		if (lane === 'all') {
+			const lanes = Object.keys(all_champs);
+			const randomLaneIndex = Math.floor(Math.random() * lanes.length);
+			const randomLane = lanes[randomLaneIndex];
+			champs = all_champs[randomLane];
 		}
+		else {
+			champs = all_champs[lane];
+		}
+		const randomIndex = Math.floor(Math.random() * champs.length);
+		return champs[randomIndex];
+	};
+	
+	module.exports = {
+		data: new SlashCommandBuilder()
+			.setName('cjchoose')
+			.setDescription('Select a random champion for a given lane')
+			.addStringOption((option) =>
+				option.setName('lane')
+					.setDescription('The lane for which to select a champion')
+					.setRequired(true)
+					.addChoices(
+						{ name: 'Top', value: 'top' },
+						{ name: 'Jungle', value: 'jg' },
+						{ name: 'Mid', value: 'mid' },
+						{ name: 'Bot', value: 'bot' },
+						{ name: 'Support', value: 'sup' },
+					),
+			)
+			.addIntegerOption((option) =>
+				option
+					.setName('number')
+					.setDescription('The number of champions to select (default: 1)'),
+			),
+		async execute(interaction) {
+			const lane = interaction.options.getString('lane');
+			const number = interaction.options.getInteger('number') || 1;
+	
+			const champions = [];
+			for (let i = 0; i < number; i++) {
+				const champion = getRandomChampion(lane);
+				champions.push(champion);
+			}
+	
+			const championList = champions.join(', ');
+	
+			await interaction.reply(
+				`Hey <@!${interaction.user.id}>! The ${number} champion(s) I picked for you for the ${lane} lane is: ${championList}`,
+			);
+		},
+	};
+	
+	
 
-		const championList = champions.join(', ');
-
-		await interaction.reply(
-			`Hey <@!${interaction.user.id}>! The ${number} champion(s) I picked for you for the ${lane} lane is: ${championList}`,
-		);
-	},
-};
-
+}catch (error) {
+    console.log("Executing cjchoose has error!")
+    console.log(error)
+}
