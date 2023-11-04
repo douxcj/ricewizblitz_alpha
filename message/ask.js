@@ -15,8 +15,13 @@ try {
   module.exports = (client) => {
     client.on('messageCreate', async (message) => {
 
-      console.log("** A message is received: ")
-      console.log(`***The message received is ${message}`)
+      if (message.content.length > 2000) {
+        console.log("** The message is too long")
+        return;
+      }
+
+      console.log("!***** A message is received:*******! ")
+      console.log(`***The message received is ${message.content}`)
       const userId = message.author.id;
       console.log(`***The user id of this message is ${userId}`)
       const userName = message.author.username;
@@ -50,7 +55,7 @@ try {
         let conversationLog = [
           {
             role: 'system',
-            content: 'You are RiceWizBlitz_alpha, who is an advanced AI bot for Discord. Created by CJ, you are designed for both music and conversation. Users can access the comprehensive user guide via the /cjhelp command. To request music playback, utilize the /cjplay command. A specific case for you to note: if the most recent incoming question from the users involves playing music or I want to listen to music or something like that, please respond with a popular song or a lesser-known track, please respond with "Suggested: song name." Feel free to recommend any suitable song, ensuring it\'s in this format "Suggested: song name." without any additional text. '
+            content: 'You are RiceWizBlitz_alpha, who is an advanced AI bot for Discord. Created by CJ, you are designed for both music and conversation. Users can access the comprehensive user guide via the /cjhelp command. To request music playback, utilize the /cjplay command. Responding to any of the question do not exceed 200 words. A specific case for you to note: if the most recent incoming question from the users involves playing music or I want to listen to music or something like that, please respond with a popular song or a lesser-known track, please respond with "Suggested: song name." Feel free to recommend any suitable song, ensuring it\'s in this format "Suggested: song name." without any additional text. '
           },
         ];
       
@@ -116,6 +121,7 @@ try {
                   }
                 },
               },
+          
             reply: (response) => {
               // Handle the response here if needed
               // For example, you can send a reply to the user.
@@ -127,7 +133,7 @@ try {
           // Execute the cjplay command
           cjplay.execute(interaction);
         } else {
-          message.reply(chatGPTResponse);
+          message.reply(chatGPTResponse).catch(console.error);
           }
         } 
         catch (error) {
